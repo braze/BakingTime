@@ -1,5 +1,5 @@
 package udacity.example.com.bakingtime;
 
-public interface MainActivityAdapterOnClickHandler {
+public interface OnAdapterClickHandler {
     void onClick(int position);
 }

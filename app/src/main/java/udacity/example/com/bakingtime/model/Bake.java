@@ -1,5 +1,7 @@
 package udacity.example.com.bakingtime.model;
 
+import java.util.ArrayList;
+
 public class Bake {
 
     private String id;
@@ -7,14 +9,32 @@ public class Bake {
     private String quantity;
     private String measure;
     private String ingredient;
+
     private String stepId;
     private String shortDescription;
     private String description;
     private String videoURL;
     private String thumbnailURL;
 
-    public Bake(String name) {
+    private static ArrayList<Bake> ingredients;
+    private static ArrayList<Bake> steps;
+
+    public Bake(String id, String name) {
+        this.id = id;
         this.name = name;
+    }
+
+    public Bake(String shortDescription, String description, String videoURL, String thumbnailURL) {
+        this.shortDescription = shortDescription;
+        this.description = description;
+        this.videoURL = videoURL;
+        this.thumbnailURL = thumbnailURL;
+    }
+
+    public Bake(String ingredient, String measure, String quantity) {
+        this.ingredient = ingredient;
+        this.measure = measure;
+        this.quantity = quantity;
     }
 
     public String getId() {
@@ -95,5 +115,21 @@ public class Bake {
 
     public void setThumbnailURL(String thumbnailURL) {
         this.thumbnailURL = thumbnailURL;
+    }
+
+    public static ArrayList<Bake> getIngredients() {
+        return ingredients;
+    }
+
+    public static void setIngredients(ArrayList<Bake> ingredients) {
+        Bake.ingredients = ingredients;
+    }
+
+    public static ArrayList<Bake> getSteps() {
+        return steps;
+    }
+
+    public static void setSteps(ArrayList<Bake> steps) {
+        Bake.steps = steps;
     }
 }

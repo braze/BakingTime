@@ -10,7 +10,7 @@ import udacity.example.com.bakingtime.model.Bake;
 import udacity.example.com.bakingtime.utilites.JsonUtils;
 import udacity.example.com.bakingtime.utilites.NetworkUtils;
 
-public class MainActivityQueryAsyncTask extends AsyncTask<URL, Void, ArrayList<Bake>> {
+public class MainActivityQueryAsyncTask extends AsyncTask<Void, Void, ArrayList<Bake>> {
     
     private final String TAG = MainActivityQueryAsyncTask.class.getSimpleName();
     private OnTaskCompleted taskCompleted;
@@ -20,24 +20,19 @@ public class MainActivityQueryAsyncTask extends AsyncTask<URL, Void, ArrayList<B
     }
 
     @Override
-    protected void onPreExecute() {
-        super.onPreExecute();
-    }
-
-    @Override
-    protected ArrayList<Bake> doInBackground(URL... urls) {
+    protected ArrayList<Bake> doInBackground(Void... voids) {
 
         Log.d(TAG, "doInBackground: ");
-        URL searchUrl = urls[0];
+        URL bakeUrl = NetworkUtils.buildBaseUrl();
 
         String jsonString = null;
         //create list of Recipes names
         ArrayList<Bake> list = new ArrayList<>();
 //        try {
 
-//            JsonString = NetworkUtils.getResponseFromHttpUrl(searchUrl);
+//            JsonString = NetworkUtils.getResponseFromHttpUrl(bakeUrl);
 
-            jsonString = NetworkUtils.getFakeResponseFromHttpUrl(searchUrl);
+            jsonString = NetworkUtils.getFakeResponseFromHttpUrl(bakeUrl);
             list = JsonUtils.getRecipesNamesList(jsonString);
 
 
