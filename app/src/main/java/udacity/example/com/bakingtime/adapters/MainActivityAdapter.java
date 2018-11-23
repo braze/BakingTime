@@ -1,5 +1,4 @@
-package udacity.example.com.bakingtime;
-
+package udacity.example.com.bakingtime.adapters;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -13,62 +12,63 @@ import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import udacity.example.com.bakingtime.interfaces.OnAdapterClickHandler;
+import udacity.example.com.bakingtime.R;
 import udacity.example.com.bakingtime.model.Bake;
 
+public class MainActivityAdapter extends RecyclerView.Adapter<MainActivityAdapter.BakeAdapterViewHolder> {
 
-public class RecipeListAdapter extends RecyclerView.Adapter<RecipeListAdapter.RecipeAdapterViewHolder> {
-
-    private ArrayList<Bake> mRecipeStepsList;
+    private ArrayList<Bake> mRecipesNameList;
 
     private final OnAdapterClickHandler mClickHandler;
 
-    public RecipeListAdapter(OnAdapterClickHandler clickHandler) {
+    public MainActivityAdapter(OnAdapterClickHandler clickHandler) {
         this.mClickHandler = clickHandler;
     }
 
     @NonNull
     @Override
-    public RecipeAdapterViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+    public BakeAdapterViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         Context context = viewGroup.getContext();
-        int layoutIdForListItem = R.layout.recipe_step_list_item;
+        int layoutIdForListItem = R.layout.recipe_name_list_item;
         LayoutInflater inflater = LayoutInflater.from(context);
         boolean shouldAttachToParentImmediately = false;
 
         View view = inflater.inflate(layoutIdForListItem, viewGroup, shouldAttachToParentImmediately);
-        RecipeAdapterViewHolder viewHolder = new RecipeAdapterViewHolder(view);
+        BakeAdapterViewHolder viewHolder = new BakeAdapterViewHolder(view);
 
         return viewHolder;
     }
 
     @Override
-    public void onBindViewHolder(@NonNull RecipeAdapterViewHolder holder, int i) {
-        String stepName = mRecipeStepsList.get(i).getShortDescription();
-        holder.itemView.setText(stepName);
+    public void onBindViewHolder(@NonNull BakeAdapterViewHolder holder, int i) {
+        String recipe = mRecipesNameList.get(i).getName();
+        holder.itemView.setText(recipe);
     }
 
     @Override
     public int getItemCount() {
-        if (mRecipeStepsList == null) {
+        if (mRecipesNameList == null) {
             return 0;
         }
-        return mRecipeStepsList.size();
+        return mRecipesNameList.size();
     }
 
-    public void setRecipeStepsList(ArrayList<Bake> recipesNameList) {
-        mRecipeStepsList = recipesNameList;
+    public void setRecipesNameList(ArrayList<Bake> recipesNameList) {
+        mRecipesNameList = recipesNameList;
         notifyDataSetChanged();
     }
 
-    public ArrayList<Bake> getRecipeStepsList() {
-        return mRecipeStepsList;
+    public ArrayList<Bake> getRecipesNameList() {
+        return mRecipesNameList;
     }
 
-    class RecipeAdapterViewHolder extends RecyclerView.ViewHolder  implements View.OnClickListener {
+    class BakeAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        @BindView(R.id.recipe_step_tv)
+        @BindView(R.id.recipe_name_tv)
         TextView itemView;
 
-        public RecipeAdapterViewHolder(View view) {
+        public BakeAdapterViewHolder(View view) {
             super(view);
 
             // binding view
@@ -84,6 +84,3 @@ public class RecipeListAdapter extends RecyclerView.Adapter<RecipeListAdapter.Re
         }
     }
 }
-
-
-

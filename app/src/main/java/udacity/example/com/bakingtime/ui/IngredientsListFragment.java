@@ -9,17 +9,35 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import udacity.example.com.bakingtime.IngredientsListAdapter;
 import udacity.example.com.bakingtime.R;
-import udacity.example.com.bakingtime.model.Bake;
+import udacity.example.com.bakingtime.RecipeActivity;
+import udacity.example.com.bakingtime.adapters.IngredientsListAdapter;
 
 public class IngredientsListFragment extends Fragment {
+
+    private static String TAG = IngredientsListFragment.class.getSimpleName();
 
     private RecyclerView mRecyclerView;
     private LinearLayoutManager mLayoutManager;
     private IngredientsListAdapter mAdapter;
 
+
     public IngredientsListFragment() {
+    }
+
+//    public static IngredientsListFragment newInstance (ArrayList<Bake> ingredients) {
+//        Bundle arguments = new Bundle();
+//        arguments.putParcelableArrayList(STEPS_LIST, ingredients);
+//        IngredientsListFragment fragment = new IngredientsListFragment();
+//        fragment.setArguments(arguments);
+//        return fragment;
+//    }
+
+    public static IngredientsListFragment newInstance () {
+        Bundle arguments = new Bundle();
+        IngredientsListFragment fragment = new IngredientsListFragment();
+        fragment.setArguments(arguments);
+        return fragment;
     }
 
     @Nullable
@@ -45,7 +63,7 @@ public class IngredientsListFragment extends Fragment {
         mRecyclerView.setHasFixedSize(true);
 
         mAdapter = new IngredientsListAdapter();
-        mAdapter.setRecipeIngredientsList(Bake.getIngredients());
+        mAdapter.setRecipeIngredientsList(RecipeActivity.ingredients);
         mRecyclerView.setAdapter(mAdapter);
 
     }

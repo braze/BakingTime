@@ -1,11 +1,15 @@
 package udacity.example.com.bakingtime.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.ArrayList;
 
-public class Bake {
+public class Bake implements Parcelable {
 
     private String id;
     private String name;
+
     private String quantity;
     private String measure;
     private String ingredient;
@@ -15,16 +19,19 @@ public class Bake {
     private String description;
     private String videoURL;
     private String thumbnailURL;
+    private ArrayList<Bake> ingredientsList;
+    private ArrayList<Bake> stepsList;
 
-    private static ArrayList<Bake> ingredients;
-    private static ArrayList<Bake> steps;
+    public Bake() {
+    }
 
     public Bake(String id, String name) {
         this.id = id;
         this.name = name;
     }
 
-    public Bake(String shortDescription, String description, String videoURL, String thumbnailURL) {
+    public Bake(String stepId, String shortDescription, String description, String videoURL, String thumbnailURL) {
+        this.stepId = stepId;
         this.shortDescription = shortDescription;
         this.description = description;
         this.videoURL = videoURL;
@@ -36,6 +43,61 @@ public class Bake {
         this.measure = measure;
         this.quantity = quantity;
     }
+
+    public Bake(ArrayList<Bake> ingredientsList, ArrayList<Bake> stepsList) {
+        this.ingredientsList = ingredientsList;
+        this.stepsList = stepsList;
+    }
+
+    protected Bake(Parcel in) {
+        id = in.readString();
+        name = in.readString();
+        quantity = in.readString();
+        measure = in.readString();
+        ingredient = in.readString();
+        stepId = in.readString();
+        shortDescription = in.readString();
+        description = in.readString();
+        videoURL = in.readString();
+        thumbnailURL = in.readString();
+        ingredientsList = in.createTypedArrayList(Bake.CREATOR);
+        stepsList = in.createTypedArrayList(Bake.CREATOR);
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(id);
+        dest.writeString(name);
+        dest.writeString(quantity);
+        dest.writeString(measure);
+        dest.writeString(ingredient);
+        dest.writeString(stepId);
+        dest.writeString(shortDescription);
+        dest.writeString(description);
+        dest.writeString(videoURL);
+        dest.writeString(thumbnailURL);
+        dest.writeTypedList(ingredientsList);
+        dest.writeTypedList(stepsList);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<Bake> CREATOR = new Creator<Bake>() {
+        @Override
+        public Bake createFromParcel(Parcel in) {
+            return new Bake(in);
+        }
+
+        @Override
+        public Bake[] newArray(int size) {
+            return new Bake[size];
+        }
+    };
+
+
 
     public String getId() {
         return id;
@@ -117,19 +179,19 @@ public class Bake {
         this.thumbnailURL = thumbnailURL;
     }
 
-    public static ArrayList<Bake> getIngredients() {
-        return ingredients;
+    public ArrayList<Bake> getIngredientsList() {
+        return ingredientsList;
     }
 
-    public static void setIngredients(ArrayList<Bake> ingredients) {
-        Bake.ingredients = ingredients;
+    public void setIngredientsList(ArrayList<Bake> ingredientsList) {
+        this.ingredientsList = ingredientsList;
     }
 
-    public static ArrayList<Bake> getSteps() {
-        return steps;
+    public ArrayList<Bake> getStepsList() {
+        return stepsList;
     }
 
-    public static void setSteps(ArrayList<Bake> steps) {
-        Bake.steps = steps;
+    public void setStepsList(ArrayList<Bake> stepsList) {
+        this.stepsList = stepsList;
     }
 }

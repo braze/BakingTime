@@ -1,4 +1,4 @@
-package udacity.example.com.bakingtime;
+package udacity.example.com.bakingtime.adapters;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -12,6 +12,7 @@ import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import udacity.example.com.bakingtime.R;
 import udacity.example.com.bakingtime.model.Bake;
 
 public class IngredientsListAdapter extends RecyclerView.Adapter<IngredientsListAdapter.IngredientsAdapterViewHolder> {

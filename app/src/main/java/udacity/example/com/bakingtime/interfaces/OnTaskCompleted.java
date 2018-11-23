@@ -1,4 +1,4 @@
-package udacity.example.com.bakingtime;
+package udacity.example.com.bakingtime.interfaces;
 
 import java.util.ArrayList;
 
