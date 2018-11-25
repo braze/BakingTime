@@ -31,15 +31,10 @@ import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 
-import java.util.ArrayList;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import udacity.example.com.bakingtime.R;
-import udacity.example.com.bakingtime.model.Bake;
-
-import static udacity.example.com.bakingtime.RecipeActivity.STEPS_LIST;
 
 public class RecipeStepSinglePageFragment extends Fragment implements ExoPlayer.EventListener {
     
@@ -49,12 +44,10 @@ public class RecipeStepSinglePageFragment extends Fragment implements ExoPlayer.
     private static final String EXTRA_DESCRIPTION_ID = "EXTRA_DESCRIPTION_ID";
     private static final String EXTRA_VIDEO_URL_ID = "EXTRA_VIDEO_URL_ID";
     private static final String EXTRA_IMAGE_URL_ID = "EXTRA_IMAGE_URL_ID";
-    private static final String EXTRA_BOOLEAN_TWO_PANE = "EXTRA_BOOLEAN_TWO_PANE";
-
     private static final String PLAY_WHEN_READY = "PLAY_WHEN_READY";
     private static final String CURRENT_WINDOW = "CURRENT_WINDOW";
     private static final String PLAYBACK_POSITION = "PLAYBACK_POSITION";
-//    private static final String TWOPANEVIEW = "TWOPANEVIEW";
+    private static final String EXTRA_STEPS_LIST_SIZE = "STEPS_LIST_SIZE";
 
     @BindView(R.id.playerView)
     SimpleExoPlayerView mPlayerView;
@@ -84,36 +77,26 @@ public class RecipeStepSinglePageFragment extends Fragment implements ExoPlayer.
     private String videoUrl;
     private String imageUrl;
     private String description;
+    private int stepListSize;
     private Unbinder unbinder;
 
 
     public RecipeStepSinglePageFragment() {
     }
 
-    public static RecipeStepSinglePageFragment newInstance(String stepId, String videoUrl, String description, String imageUrl, ArrayList<Bake> steps, boolean twoPane) {
+    public static RecipeStepSinglePageFragment newInstance(String stepId, String videoUrl, String description, String imageUrl, int stepsListSize) {
         Log.d("RecipeStepSingle", "in newInstance");
         Bundle arguments = new Bundle();
         arguments.putString(EXTRA_STEP_ID, stepId);
         arguments.putString(EXTRA_DESCRIPTION_ID, description);
         arguments.putString(EXTRA_VIDEO_URL_ID, videoUrl);
         arguments.putString(EXTRA_IMAGE_URL_ID, imageUrl);
-        arguments.putParcelableArrayList(STEPS_LIST, steps);
-        arguments.putBoolean(EXTRA_BOOLEAN_TWO_PANE, twoPane);
+        arguments.putInt(EXTRA_STEPS_LIST_SIZE, stepsListSize);
         RecipeStepSinglePageFragment fragment = new RecipeStepSinglePageFragment();
         fragment.setArguments(arguments);
         return fragment;
     }
 
-//    public static RecipeStepSinglePageFragment newInstance(String stepId, String videoUrl, String description, String imageUrl) {
-//        Log.d("RecipeStepSingle", "in newInstance");
-//        Bundle arguments = new Bundle();
-//        arguments.putString(EXTRA_DESCRIPTION_ID, description);
-//        arguments.putString(EXTRA_VIDEO_URL_ID, videoUrl);
-//        arguments.putString(EXTRA_IMAGE_URL_ID, imageUrl);
-//        RecipeStepSinglePageFragment fragment = new RecipeStepSinglePageFragment();
-//        fragment.setArguments(arguments);
-//        return fragment;
-//    }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
@@ -126,15 +109,13 @@ public class RecipeStepSinglePageFragment extends Fragment implements ExoPlayer.
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
+        mTwoPane = getResources().getBoolean(R.bool.two_pane);
 
         if (getArguments() != null) {
             stepId = getArguments().getString(EXTRA_STEP_ID);
             description = getArguments().getString(EXTRA_DESCRIPTION_ID);
             imageUrl = getArguments().getString(EXTRA_IMAGE_URL_ID);
             videoUrl = getArguments().getString(EXTRA_VIDEO_URL_ID);
-            mTwoPane = getArguments().getBoolean(EXTRA_BOOLEAN_TWO_PANE);
         }
     }
 
@@ -242,7 +223,6 @@ public class RecipeStepSinglePageFragment extends Fragment implements ExoPlayer.
     @Override
     public void onPause() {
         super.onPause();
-
         releasePlayer();
     }
 
@@ -335,16 +315,20 @@ public class RecipeStepSinglePageFragment extends Fragment implements ExoPlayer.
     }
 
     private void initializeButtons() {
-        int steps = getArguments().getParcelableArrayList(STEPS_LIST).size() - 2;
-        int id = Integer.parseInt(stepId);
-        if (id == steps) {
-            next.setVisibility(View.INVISIBLE);
-        }
-        if (id == 0) {
-            previous.setVisibility(View.INVISIBLE);
+        if (mTwoPane) {
+            next.setVisibility(View.GONE);
+            previous.setVisibility(View.GONE);
+        } else {
+            int steps = stepListSize - 2;
+            int id = Integer.parseInt(stepId);
+            if (id == steps) {
+                next.setVisibility(View.INVISIBLE);
+            }
+            if (id == 0) {
+                previous.setVisibility(View.INVISIBLE);
+            }
         }
     }
-
 
 }
 

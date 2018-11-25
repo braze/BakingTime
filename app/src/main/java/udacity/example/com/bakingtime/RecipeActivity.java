@@ -51,7 +51,6 @@ public class RecipeActivity extends AppCompatActivity implements RecipeListFragm
         }
 
         mTwoPane = getResources().getBoolean(R.bool.two_pane);
-
         mIngredientFragment = IngredientsListFragment.newInstance();
         mRecipeListFragment = RecipeListFragment.newInstance(steps);
 
@@ -60,13 +59,12 @@ public class RecipeActivity extends AppCompatActivity implements RecipeListFragm
         if (savedInstanceState != null) {
             ingredients = savedInstanceState.getParcelableArrayList("ingredientsList");
             steps = savedInstanceState.getParcelableArrayList("stepsList");
-            if (savedInstanceState.containsKey("mIngredientFragment")) {
 
+            if (savedInstanceState.containsKey("mIngredientFragment")) {
                 mIngredientFragment = (IngredientsListFragment) fragmentManager.getFragment(savedInstanceState, "mIngredientFragment");
                 assert mIngredientFragment != null;
                 replaceFragment(mIngredientFragment, R.id.recipe_detail_list_frame);
             } else if (savedInstanceState.containsKey("mRecipeListFragment")) {
-
                 mRecipeListFragment = (RecipeListFragment) fragmentManager.getFragment(savedInstanceState, "mRecipeListFragment");
                 assert mRecipeListFragment != null;
                 replaceFragment(mRecipeListFragment, R.id.recipe_detail_list_frame);
@@ -78,7 +76,6 @@ public class RecipeActivity extends AppCompatActivity implements RecipeListFragm
 
                 //start ingredient fragment
                 replaceFragment(mIngredientFragment, R.id.recipe_detail_action_frame);
-
             } else {
                 //start recipe list fragment
                 replaceFragment(mRecipeListFragment, R.id.recipe_detail_list_frame);
@@ -86,14 +83,17 @@ public class RecipeActivity extends AppCompatActivity implements RecipeListFragm
         }
     }
 
-
     @Override
     public void onListItemSelected(int position) {
         currentPosition = position;
+        FragmentManager fragmentManager = getSupportFragmentManager();
+
         if (position == 0) {
             //start ingredient fragment
             if (mTwoPane) {
-                replaceFragment(mIngredientFragment, R.id.recipe_detail_action_frame);
+                fragmentManager.beginTransaction()
+                        .replace(R.id.recipe_detail_action_frame, mIngredientFragment)
+                        .commit();
             } else {
                 replaceFragment(mIngredientFragment, R.id.recipe_detail_list_frame);
             }
@@ -109,25 +109,32 @@ public class RecipeActivity extends AppCompatActivity implements RecipeListFragm
         String description = step.getDescription();
         String videoURL = step.getVideoURL();
         String thumbnailURL = step.getThumbnailURL();
+        int stepsListSize = steps.size();
 
         mRecipeStepSinglePageFragment = RecipeStepSinglePageFragment.newInstance(stepId,
-                videoURL, description, thumbnailURL, steps, mTwoPane);
+                videoURL, description, thumbnailURL, stepsListSize);
+
+        FragmentManager fragmentManager = getSupportFragmentManager();
 
         if (mTwoPane) {
-            replaceFragment(mRecipeStepSinglePageFragment, R.id.recipe_detail_action_frame);
+            fragmentManager.beginTransaction()
+                    .replace(R.id.recipe_detail_action_frame, mRecipeStepSinglePageFragment)
+                    .commit();
         } else {
-            replaceFragment(mRecipeStepSinglePageFragment, R.id.recipe_detail_list_frame);
+            fragmentManager.beginTransaction()
+                    .replace(R.id.recipe_detail_list_frame, mRecipeStepSinglePageFragment)
+                    .commit();
         }
     }
 
-    private void replaceFragment (Fragment fragment, int content_frame){
-        String backStateName =  fragment.getClass().getName();
+    private void replaceFragment(Fragment fragment, int content_frame) {
+        String backStateName = fragment.getClass().getName();
         String fragmentTag = backStateName;
 
         FragmentManager manager = getSupportFragmentManager();
-        boolean fragmentPopped = manager.popBackStackImmediate (backStateName, 0);
+        boolean fragmentPopped = manager.popBackStackImmediate(backStateName, 0);
 
-        if (!fragmentPopped && manager.findFragmentByTag(fragmentTag) == null){ //fragment not in back stack, create it.
+        if (!fragmentPopped && manager.findFragmentByTag(fragmentTag) == null) { //fragment not in back stack, create it.
             FragmentTransaction ft = manager.beginTransaction();
             ft.replace(content_frame, fragment, fragmentTag);
             ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
@@ -165,6 +172,9 @@ public class RecipeActivity extends AppCompatActivity implements RecipeListFragm
 
     @Override
     public void onBackPressed() {
+        if (mTwoPane) {
+            startActivity(new Intent(RecipeActivity.this, MainActivity.class));
+        }
         if (getSupportFragmentManager().getBackStackEntryCount() == 1) {
             finish();
         } else {
