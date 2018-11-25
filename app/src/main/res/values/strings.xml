@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">BakingTime</string>
     <string name="ingredients">Ingredients</string>
+    <string name="err_message">Something went wrong)</string>
 </resources>

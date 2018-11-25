@@ -2,6 +2,7 @@ package udacity.example.com.bakingtime.ui;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -23,10 +24,12 @@ import static udacity.example.com.bakingtime.RecipeActivity.STEPS_LIST;
 public class RecipeListFragment extends Fragment implements OnAdapterClickHandler {
 
     private static String TAG = RecipeListFragment.class.getSimpleName();
+    private static final String BUNDLE_RECYCLER_LAYOUT = "ingredientsListFragment_recycler_layout";
+    private static final String ADAPTER_LIST = "ingredientsListFragment_adapter_list";
 
     private RecyclerView mRecyclerView;
-    private LinearLayoutManager mLayoutManager;
     private RecipeListAdapter mAdapter;
+    private Parcelable mSavedRecyclerLayoutState;
     OnSelectedListener mCallback;
 
     public RecipeListFragment() {
@@ -53,22 +56,38 @@ public class RecipeListFragment extends Fragment implements OnAdapterClickHandle
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+
+        mRecyclerView.setLayoutManager(layoutManager);
+        mRecyclerView.setHasFixedSize(true);
+
         mAdapter = new RecipeListAdapter(this);
-        assert getArguments() != null;
-        mAdapter.setRecipeStepsList(getArguments().<Bake>getParcelableArrayList(STEPS_LIST));
+
+        if (savedInstanceState != null) {
+            mSavedRecyclerLayoutState = savedInstanceState.getParcelable(BUNDLE_RECYCLER_LAYOUT);
+            mRecyclerView.getLayoutManager().onRestoreInstanceState(mSavedRecyclerLayoutState);
+            ArrayList<Bake> stepsList = savedInstanceState.getParcelableArrayList(ADAPTER_LIST);
+            mAdapter.setRecipeStepsList(stepsList);
+        } else {
+            mAdapter.setRecipeStepsList(getArguments().<Bake>getParcelableArrayList(STEPS_LIST));
+        }
     }
 
     @Override
     public void onStart() {
         super.onStart();
-
-        mLayoutManager = new LinearLayoutManager(getContext());
-        mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-
-        mRecyclerView.setLayoutManager(mLayoutManager);
-        mRecyclerView.setHasFixedSize(true);
-
         mRecyclerView.setAdapter(mAdapter);
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (mAdapter != null){
+            outState.putParcelableArrayList(ADAPTER_LIST, mAdapter.getRecipeStepsList());
+            outState.putParcelable(BUNDLE_RECYCLER_LAYOUT, mRecyclerView.getLayoutManager().onSaveInstanceState());
+        }
     }
 
     // click on recyclerView item

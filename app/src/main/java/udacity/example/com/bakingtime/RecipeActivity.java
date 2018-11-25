@@ -2,7 +2,9 @@ package udacity.example.com.bakingtime;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -23,7 +25,6 @@ public class RecipeActivity extends AppCompatActivity implements RecipeListFragm
     private static String TAG = RecipeActivity.class.getSimpleName();
 
     public static final String STEPS_LIST = "steps_list";
-    public static final String INGREDIENTS_LIST = "ingredient_list";
 
     IngredientsListFragment mIngredientFragment;
     RecipeListFragment mRecipeListFragment;
@@ -40,74 +41,61 @@ public class RecipeActivity extends AppCompatActivity implements RecipeListFragm
         setContentView(R.layout.activity_recipe);
 
         Intent intent = getIntent();
-        Log.d(TAG, "onCreate: intent != NULL -> " + (intent != null));
         if (intent != null) {
             String cakeName = intent.getStringExtra(Intent.EXTRA_TEXT);
             setTitle(cakeName);
             steps = intent.getExtras().getParcelableArrayList(EXTRA_STEPS_LIST);
-            Log.d(TAG, "onCreate: steps is NULL -> " + (steps == null));
             ingredients = intent.getExtras().getParcelableArrayList(EXTRA_INGREDIENTS_LIST);
-            Log.d(TAG, "onCreate: ingredients is NULL -> " + (ingredients == null));
         } else {
-            Log.d(TAG, "onCreate: WARNING!!! INTENT == NULL");
+            closeOnError();
         }
 
         mTwoPane = getResources().getBoolean(R.bool.two_pane);
 
-        Log.d(TAG, "onCreate: mTwoPane = " + mTwoPane);
+        mIngredientFragment = IngredientsListFragment.newInstance();
+        mRecipeListFragment = RecipeListFragment.newInstance(steps);
 
         FragmentManager fragmentManager = getSupportFragmentManager();
 
         if (savedInstanceState != null) {
-            Log.d(TAG, "onCreate: lists reincarnation");
-//            mIngredientFragment = (IngredientsListFragment) fragmentManager.getFragment(savedInstanceState, "mIngredientFragment");
-//            mRecipeListFragment = (RecipeListFragment) fragmentManager.getFragment(savedInstanceState, "mRecipeListFragment");
-//            mRecipeStepSinglePageFragment = (RecipeStepSinglePageFragment) fragmentManager.getFragment(savedInstanceState, "mRecipeStepSinglePageFragment");
             ingredients = savedInstanceState.getParcelableArrayList("ingredientsList");
-            Log.d(TAG, "onCreate: ingredients != NULL ? "+(ingredients!=null));
             steps = savedInstanceState.getParcelableArrayList("stepsList");
-            Log.d(TAG, "onCreate: steps != NULL ? "+(steps!=null));
+            if (savedInstanceState.containsKey("mIngredientFragment")) {
 
-        }
+                mIngredientFragment = (IngredientsListFragment) fragmentManager.getFragment(savedInstanceState, "mIngredientFragment");
+                assert mIngredientFragment != null;
+                replaceFragment(mIngredientFragment, R.id.recipe_detail_list_frame);
+            } else if (savedInstanceState.containsKey("mRecipeListFragment")) {
 
-        if (mTwoPane) {
-            mRecipeListFragment = RecipeListFragment.newInstance(steps);
-            fragmentManager.beginTransaction()
-                    .replace(R.id.recipe_detail_list_frame, mRecipeListFragment)
-                    .commit();
-
-            mIngredientFragment = IngredientsListFragment.newInstance();
-            fragmentManager.beginTransaction()
-                    .replace(R.id.recipe_detail_action_frame, mIngredientFragment)
-                    .commit();
+                mRecipeListFragment = (RecipeListFragment) fragmentManager.getFragment(savedInstanceState, "mRecipeListFragment");
+                assert mRecipeListFragment != null;
+                replaceFragment(mRecipeListFragment, R.id.recipe_detail_list_frame);
+            }
         } else {
-            mRecipeListFragment = RecipeListFragment.newInstance(steps);
-            fragmentManager.beginTransaction()
-                    .replace(R.id.recipe_detail_list_frame, mRecipeListFragment)
-                    .addToBackStack("")
-                    .commit();
-        }
+            if (mTwoPane) {
+                //start recipe list fragment
+                replaceFragment(mRecipeListFragment, R.id.recipe_detail_list_frame);
 
+                //start ingredient fragment
+                replaceFragment(mIngredientFragment, R.id.recipe_detail_action_frame);
+
+            } else {
+                //start recipe list fragment
+                replaceFragment(mRecipeListFragment, R.id.recipe_detail_list_frame);
+            }
+        }
     }
 
 
     @Override
     public void onListItemSelected(int position) {
         currentPosition = position;
-        FragmentManager fragmentManager = getSupportFragmentManager();
-
         if (position == 0) {
+            //start ingredient fragment
             if (mTwoPane) {
-                fragmentManager.beginTransaction()
-                        .replace(R.id.recipe_detail_action_frame, mIngredientFragment)
-//                        .addToBackStack("")
-                        .commit();
+                replaceFragment(mIngredientFragment, R.id.recipe_detail_action_frame);
             } else {
-                mIngredientFragment = IngredientsListFragment.newInstance();
-                fragmentManager.beginTransaction()
-                        .replace(R.id.recipe_detail_list_frame, mIngredientFragment)
-                        .addToBackStack("")
-                        .commit();
+                replaceFragment(mIngredientFragment, R.id.recipe_detail_list_frame);
             }
         } else {
             Toast.makeText(this, "item#" + position, Toast.LENGTH_SHORT).show();
@@ -125,20 +113,27 @@ public class RecipeActivity extends AppCompatActivity implements RecipeListFragm
         mRecipeStepSinglePageFragment = RecipeStepSinglePageFragment.newInstance(stepId,
                 videoURL, description, thumbnailURL, steps, mTwoPane);
 
-        FragmentManager fragmentManager = getSupportFragmentManager();
-
         if (mTwoPane) {
-            fragmentManager.beginTransaction()
-                    .replace(R.id.recipe_detail_action_frame, mRecipeStepSinglePageFragment)
-//                .addToBackStack("")
-                    .commit();
+            replaceFragment(mRecipeStepSinglePageFragment, R.id.recipe_detail_action_frame);
         } else {
-            fragmentManager.beginTransaction()
-                    .replace(R.id.recipe_detail_list_frame, mRecipeStepSinglePageFragment)
-                    .addToBackStack("")
-                    .commit();
+            replaceFragment(mRecipeStepSinglePageFragment, R.id.recipe_detail_list_frame);
         }
+    }
 
+    private void replaceFragment (Fragment fragment, int content_frame){
+        String backStateName =  fragment.getClass().getName();
+        String fragmentTag = backStateName;
+
+        FragmentManager manager = getSupportFragmentManager();
+        boolean fragmentPopped = manager.popBackStackImmediate (backStateName, 0);
+
+        if (!fragmentPopped && manager.findFragmentByTag(fragmentTag) == null){ //fragment not in back stack, create it.
+            FragmentTransaction ft = manager.beginTransaction();
+            ft.replace(content_frame, fragment, fragmentTag);
+            ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+            ft.addToBackStack(backStateName);
+            ft.commit();
+        }
     }
 
     public void next(View view) {
@@ -154,19 +149,32 @@ public class RecipeActivity extends AppCompatActivity implements RecipeListFragm
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        //Save the fragment's instance
-//        getSupportFragmentManager().putFragment(outState, "recipeStepSinglePageFragment", mRecipeStepSinglePageFragment);
-//        getSupportFragmentManager().putFragment(outState, "mRecipeListFragment", mRecipeListFragment);
-//        getSupportFragmentManager().putFragment(outState, "mIngredientFragment", mIngredientFragment);
-        Log.d(TAG, "onSaveInstanceState: save lists");
+
+        Log.d(TAG, "onSaveInstanceState: contains(mRecipeListFragment) " + (getSupportFragmentManager().getFragments().contains(mRecipeListFragment)));
+        Log.d(TAG, "onSaveInstanceState: contains(mIngredientFragment) " + (getSupportFragmentManager().getFragments().contains(mIngredientFragment)));
+
+        if (mRecipeListFragment != null && getSupportFragmentManager().getFragments().contains(mRecipeListFragment)) {
+            getSupportFragmentManager().putFragment(outState, "mRecipeListFragment", mRecipeListFragment);
+        }
+        if (mIngredientFragment != null && getSupportFragmentManager().getFragments().contains(mIngredientFragment)) {
+            getSupportFragmentManager().putFragment(outState, "mIngredientFragment", mIngredientFragment);
+        }
         outState.putParcelableArrayList("ingredientsList", ingredients);
         outState.putParcelableArrayList("stepsList", steps);
-
     }
 
-//    @Override
-//    public void onBackPressed() {
-//        super.onBackPressed();
-//        startActivity(new Intent(RecipeActivity.this, MainActivity.class));
-//    }
+    @Override
+    public void onBackPressed() {
+        if (getSupportFragmentManager().getBackStackEntryCount() == 1) {
+            finish();
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    private void closeOnError() {
+        finish();
+        Toast.makeText(this, R.string.err_message, Toast.LENGTH_SHORT).show();
+    }
+
 }

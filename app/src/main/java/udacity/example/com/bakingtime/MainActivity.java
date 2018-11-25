@@ -75,6 +75,12 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted, 
         mAdapter.setRecipesNameList(mAdapter.getRecipesNameList());
         mRecyclerView.setAdapter(mAdapter);
 
+//        makeRecipesQuery(this);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         makeRecipesQuery(this);
     }
 

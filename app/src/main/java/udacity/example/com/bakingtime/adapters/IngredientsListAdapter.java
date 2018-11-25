@@ -22,7 +22,6 @@ public class IngredientsListAdapter extends RecyclerView.Adapter<IngredientsList
     public IngredientsListAdapter() {
     }
 
-
     @NonNull
     @Override
     public IngredientsAdapterViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {

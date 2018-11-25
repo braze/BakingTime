@@ -1,6 +1,8 @@
 package udacity.example.com.bakingtime.ui;
 
 import android.os.Bundle;
+import android.os.Parcelable;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -9,29 +11,26 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.ArrayList;
+
 import udacity.example.com.bakingtime.R;
 import udacity.example.com.bakingtime.RecipeActivity;
 import udacity.example.com.bakingtime.adapters.IngredientsListAdapter;
+import udacity.example.com.bakingtime.model.Bake;
 
 public class IngredientsListFragment extends Fragment {
 
     private static String TAG = IngredientsListFragment.class.getSimpleName();
+    private static final String BUNDLE_RECYCLER_LAYOUT = "ingredientsListFragment_recycler_layout";
+    private static final String ADAPTER_LIST = "ingredientsListFragment_adapter_list";
 
     private RecyclerView mRecyclerView;
-    private LinearLayoutManager mLayoutManager;
+    private Parcelable mSavedRecyclerLayoutState;
     private IngredientsListAdapter mAdapter;
 
 
     public IngredientsListFragment() {
     }
-
-//    public static IngredientsListFragment newInstance (ArrayList<Bake> ingredients) {
-//        Bundle arguments = new Bundle();
-//        arguments.putParcelableArrayList(STEPS_LIST, ingredients);
-//        IngredientsListFragment fragment = new IngredientsListFragment();
-//        fragment.setArguments(arguments);
-//        return fragment;
-//    }
 
     public static IngredientsListFragment newInstance () {
         Bundle arguments = new Bundle();
@@ -48,6 +47,24 @@ public class IngredientsListFragment extends Fragment {
 
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.ingredients_recyclerView);
 
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+
+        mRecyclerView.setLayoutManager(layoutManager);
+        mRecyclerView.setHasFixedSize(true);
+
+        mAdapter = new IngredientsListAdapter();
+
+        if (savedInstanceState != null) {
+            mSavedRecyclerLayoutState = savedInstanceState.getParcelable(BUNDLE_RECYCLER_LAYOUT);
+
+            mRecyclerView.getLayoutManager().onRestoreInstanceState(mSavedRecyclerLayoutState);
+            ArrayList<Bake> ingredientsList = savedInstanceState.getParcelableArrayList(ADAPTER_LIST);
+            mAdapter.setRecipeIngredientsList(ingredientsList);
+        } else {
+            mAdapter.setRecipeIngredientsList(RecipeActivity.ingredients);
+        }
+
         return rootView;
     }
 
@@ -55,16 +72,17 @@ public class IngredientsListFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-
-        mLayoutManager = new LinearLayoutManager(getContext());
-        mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-
-        mRecyclerView.setLayoutManager(mLayoutManager);
-        mRecyclerView.setHasFixedSize(true);
-
-        mAdapter = new IngredientsListAdapter();
-        mAdapter.setRecipeIngredientsList(RecipeActivity.ingredients);
         mRecyclerView.setAdapter(mAdapter);
+
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (mAdapter != null){
+            outState.putParcelableArrayList(ADAPTER_LIST, mAdapter.getRecipeIngredientsList());
+            outState.putParcelable(BUNDLE_RECYCLER_LAYOUT, mRecyclerView.getLayoutManager().onSaveInstanceState());
+        }
 
     }
 }
