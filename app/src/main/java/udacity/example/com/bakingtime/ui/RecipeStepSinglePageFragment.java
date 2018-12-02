@@ -77,7 +77,7 @@ public class RecipeStepSinglePageFragment extends Fragment implements ExoPlayer.
     private String videoUrl;
     private String imageUrl;
     private String description;
-    private int stepListSize;
+    private int stepsListSize;
     private Unbinder unbinder;
 
 
@@ -116,6 +116,7 @@ public class RecipeStepSinglePageFragment extends Fragment implements ExoPlayer.
             description = getArguments().getString(EXTRA_DESCRIPTION_ID);
             imageUrl = getArguments().getString(EXTRA_IMAGE_URL_ID);
             videoUrl = getArguments().getString(EXTRA_VIDEO_URL_ID);
+            stepsListSize = getArguments().getInt(EXTRA_STEPS_LIST_SIZE);
         }
     }
 
@@ -319,7 +320,7 @@ public class RecipeStepSinglePageFragment extends Fragment implements ExoPlayer.
             next.setVisibility(View.GONE);
             previous.setVisibility(View.GONE);
         } else {
-            int steps = stepListSize - 2;
+            int steps = stepsListSize - 2;
             int id = Integer.parseInt(stepId);
             if (id == steps) {
                 next.setVisibility(View.INVISIBLE);

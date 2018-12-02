@@ -6,7 +6,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -16,6 +15,7 @@ import udacity.example.com.bakingtime.model.Bake;
 import udacity.example.com.bakingtime.ui.IngredientsListFragment;
 import udacity.example.com.bakingtime.ui.RecipeListFragment;
 import udacity.example.com.bakingtime.ui.RecipeStepSinglePageFragment;
+import udacity.example.com.bakingtime.widget.BakingTimeService;
 
 import static udacity.example.com.bakingtime.MainActivity.EXTRA_INGREDIENTS_LIST;
 import static udacity.example.com.bakingtime.MainActivity.EXTRA_STEPS_LIST;
@@ -33,6 +33,7 @@ public class RecipeActivity extends AppCompatActivity implements RecipeListFragm
     private int currentPosition;
     public static ArrayList<Bake> ingredients;
     private ArrayList<Bake> steps;
+    private String mCakeName;
     boolean mTwoPane;
 
     @Override
@@ -42,8 +43,8 @@ public class RecipeActivity extends AppCompatActivity implements RecipeListFragm
 
         Intent intent = getIntent();
         if (intent != null) {
-            String cakeName = intent.getStringExtra(Intent.EXTRA_TEXT);
-            setTitle(cakeName);
+            mCakeName = intent.getStringExtra(Intent.EXTRA_TEXT);
+            setTitle(mCakeName);
             steps = intent.getExtras().getParcelableArrayList(EXTRA_STEPS_LIST);
             ingredients = intent.getExtras().getParcelableArrayList(EXTRA_INGREDIENTS_LIST);
         } else {
@@ -81,6 +82,9 @@ public class RecipeActivity extends AppCompatActivity implements RecipeListFragm
                 replaceFragment(mRecipeListFragment, R.id.recipe_detail_list_frame);
             }
         }
+
+        BakingTimeService.startActionSetWidgetIngredients(this, mCakeName);
+
     }
 
     @Override
@@ -156,9 +160,6 @@ public class RecipeActivity extends AppCompatActivity implements RecipeListFragm
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-
-        Log.d(TAG, "onSaveInstanceState: contains(mRecipeListFragment) " + (getSupportFragmentManager().getFragments().contains(mRecipeListFragment)));
-        Log.d(TAG, "onSaveInstanceState: contains(mIngredientFragment) " + (getSupportFragmentManager().getFragments().contains(mIngredientFragment)));
 
         if (mRecipeListFragment != null && getSupportFragmentManager().getFragments().contains(mRecipeListFragment)) {
             getSupportFragmentManager().putFragment(outState, "mRecipeListFragment", mRecipeListFragment);

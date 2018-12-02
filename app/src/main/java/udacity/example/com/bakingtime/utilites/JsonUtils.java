@@ -23,6 +23,10 @@ public class JsonUtils {
      */
     public static ArrayList<Bake> getRecipesNamesList (String jsonString) {
 
+        if (jsonString == null || jsonString.isEmpty()) {
+            return null;
+        }
+
         ArrayList<Bake> list = new ArrayList<>();
         JSONArray array = null;
         try {
