@@ -10,8 +10,6 @@ import udacity.example.com.bakingtime.model.Bake;
 
 public class JsonUtils {
 
-    private static String TAG = JsonUtils.class.getSimpleName();
-
     private JsonUtils() {
     }
 
@@ -69,9 +67,6 @@ public class JsonUtils {
                     for (int j = 0; j < arrayIngredients.length(); j++) {
                         JSONObject objInArrayIngredients = arrayIngredients.getJSONObject(j);
                         String ingredient = objInArrayIngredients.getString("ingredient");
-
-//                        Log.d(TAG, "getRecipeDetails: ingredient = "+ingredient);
-
                         String measure = objInArrayIngredients.getString("measure");
                         String quantity = objInArrayIngredients.getString("quantity");
                         ingredients.add(new Bake(ingredient, measure, quantity));
@@ -81,9 +76,6 @@ public class JsonUtils {
                     for (int j = 0; j < arraySteps.length(); j++) {
                         JSONObject objInArraySteps = arraySteps.getJSONObject(j);
                         String stepId = objInArraySteps.getString("id");
-
-//                        Log.d(TAG, "getRecipeDetails: id = "+id);
-
                         String shortDescription = objInArraySteps.getString("shortDescription");
                         String description = objInArraySteps.getString("description");
                         String videoURL = objInArraySteps.getString("videoURL");
@@ -96,8 +88,6 @@ public class JsonUtils {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-//        bake.setSteps(steps);
-//        bake.setIngredients(ingredients);
         return new Bake(ingredients, steps);
     }
 

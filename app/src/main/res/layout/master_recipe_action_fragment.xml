@@ -24,7 +24,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="4"
-        android:textSize="16sp"
+        android:textSize="@dimen/bigger_text_size"
         tools:text="step description" />
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -39,7 +39,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:onClick="previous"
-            android:text="previous" />
+            android:text="@string/previous_button_name" />
 
         <Button
             android:id="@+id/next"
@@ -47,7 +47,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:onClick="next"
-            android:text="next" />
+            android:text="@string/next_button_name" />
 
     </LinearLayout>
 

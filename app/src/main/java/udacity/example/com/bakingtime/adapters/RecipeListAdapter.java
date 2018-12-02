@@ -21,7 +21,6 @@ import udacity.example.com.bakingtime.model.Bake;
 public class RecipeListAdapter extends RecyclerView.Adapter<RecipeListAdapter.RecipeAdapterViewHolder> {
 
     private ArrayList<Bake> mRecipeStepsList;
-
     private final OnAdapterClickHandler mClickHandler;
 
     public RecipeListAdapter(OnAdapterClickHandler clickHandler) {

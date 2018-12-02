@@ -20,7 +20,6 @@ import udacity.example.com.bakingtime.model.Bake;
 
 public class IngredientsListFragment extends Fragment {
 
-    private static String TAG = IngredientsListFragment.class.getSimpleName();
     private static final String BUNDLE_RECYCLER_LAYOUT = "ingredientsListFragment_recycler_layout";
     private static final String ADAPTER_LIST = "ingredientsListFragment_adapter_list";
 

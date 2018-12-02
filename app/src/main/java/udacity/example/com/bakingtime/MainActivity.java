@@ -33,8 +33,6 @@ import static udacity.example.com.bakingtime.utilites.NetworkUtils.THE_JSON;
 public class MainActivity extends AppCompatActivity implements OnTaskCompleted, OnAdapterClickHandler,
         LoaderManager.LoaderCallbacks<Bake> {
 
-    private static String TAG = MainActivity.class.getSimpleName();
-
     public static final String EXTRA_STEPS_LIST = "steps_list";
     public static final String EXTRA_INGREDIENTS_LIST = "ingredients_list";
     private static final int RECIPE_LOADER_ID = 1;
@@ -46,7 +44,6 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted, 
     private RecyclerView mRecyclerView;
     private GridLayoutManager mGridLayoutManager;
     private SharedPreferences preferences;
-
 
     private ArrayList<Bake> ingredients;
     private ArrayList<Bake> steps;
@@ -74,8 +71,6 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted, 
         mAdapter = new MainActivityAdapter(this);
         mAdapter.setRecipesNameList(mAdapter.getRecipesNameList());
         mRecyclerView.setAdapter(mAdapter);
-
-//        makeRecipesQuery(this);
     }
 
     @Override

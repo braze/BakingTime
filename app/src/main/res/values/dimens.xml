@@ -10,4 +10,12 @@ Refer to App Widget Documentation for margin information
 http://developer.android.com/guide/topics/appwidgets/index.html#CreatingLayout
     -->
     <dimen name="widget_margin">8dp</dimen>
+    <dimen name="widget_header_text_size">24sp</dimen>
+    <dimen name="standart_margin">8dp</dimen>
+    <dimen name="min_margin">2dp</dimen>
+    <dimen name="standart_text_size">14sp</dimen>
+    <dimen name="bigger_text_size">16sp</dimen>
+    <dimen name="elevation">2dp</dimen>
+    <dimen name="double_margin">16dp</dimen>
+    <dimen name="giant_text_size">32sp</dimen>
 </resources>

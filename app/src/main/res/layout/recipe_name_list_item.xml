@@ -9,17 +9,17 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/card_margin"
-        android:elevation="2dp"
+        android:elevation="@dimen/elevation"
         card_view:cardCornerRadius="@dimen/card_album_radius">
 
         <TextView
             android:id="@+id/recipe_name_tv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="16dp"
+            android:layout_margin="@dimen/double_margin"
             android:fontFamily="sans-serif"
             android:gravity="center"
-            android:textSize="32sp"
+            android:textSize="@dimen/giant_text_size"
             android:textStyle="normal"
             tools:text="Recipe name" />
 

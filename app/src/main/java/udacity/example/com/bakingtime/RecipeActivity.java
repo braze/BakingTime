@@ -22,8 +22,6 @@ import static udacity.example.com.bakingtime.MainActivity.EXTRA_STEPS_LIST;
 
 public class RecipeActivity extends AppCompatActivity implements RecipeListFragment.OnSelectedListener {
 
-    private static String TAG = RecipeActivity.class.getSimpleName();
-
     public static final String STEPS_LIST = "steps_list";
 
     IngredientsListFragment mIngredientFragment;
@@ -102,7 +100,6 @@ public class RecipeActivity extends AppCompatActivity implements RecipeListFragm
                 replaceFragment(mIngredientFragment, R.id.recipe_detail_list_frame);
             }
         } else {
-            Toast.makeText(this, "item#" + position, Toast.LENGTH_SHORT).show();
             getStepDetailsFragment(position);
         }
     }

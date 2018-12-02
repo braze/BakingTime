@@ -37,8 +37,6 @@ import butterknife.Unbinder;
 import udacity.example.com.bakingtime.R;
 
 public class RecipeStepSinglePageFragment extends Fragment implements ExoPlayer.EventListener {
-    
-    private static final String TAG = RecipeStepSinglePageFragment.class.getSimpleName();
 
     private static final String EXTRA_STEP_ID = "EXTRA_STEP_ID";
     private static final String EXTRA_DESCRIPTION_ID = "EXTRA_DESCRIPTION_ID";
@@ -85,7 +83,6 @@ public class RecipeStepSinglePageFragment extends Fragment implements ExoPlayer.
     }
 
     public static RecipeStepSinglePageFragment newInstance(String stepId, String videoUrl, String description, String imageUrl, int stepsListSize) {
-        Log.d("RecipeStepSingle", "in newInstance");
         Bundle arguments = new Bundle();
         arguments.putString(EXTRA_STEP_ID, stepId);
         arguments.putString(EXTRA_DESCRIPTION_ID, description);

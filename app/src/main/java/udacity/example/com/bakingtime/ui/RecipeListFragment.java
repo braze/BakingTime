@@ -23,7 +23,6 @@ import static udacity.example.com.bakingtime.RecipeActivity.STEPS_LIST;
 
 public class RecipeListFragment extends Fragment implements OnAdapterClickHandler {
 
-    private static String TAG = RecipeListFragment.class.getSimpleName();
     private static final String BUNDLE_RECYCLER_LAYOUT = "ingredientsListFragment_recycler_layout";
     private static final String ADAPTER_LIST = "ingredientsListFragment_adapter_list";
 

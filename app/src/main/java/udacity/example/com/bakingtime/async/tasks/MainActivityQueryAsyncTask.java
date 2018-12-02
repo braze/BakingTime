@@ -24,18 +24,6 @@ public class MainActivityQueryAsyncTask extends AsyncTask<Void, Void, ArrayList<
     @Override
     protected ArrayList<Bake> doInBackground(Void... voids) {
 
-//        URL bakeUrl = NetworkUtils.buildBaseUrl();
-//
-//        String jsonString = null;
-        //create list of Recipes names
-//        ArrayList<Bake> list = new ArrayList<>();
-//        try {
-//            jsonString = NetworkUtils.getResponseFromHttpUrl(bakeUrl);
-//            list = JsonUtils.getRecipesNamesList(jsonString);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-
         ArrayList<Bake> list = new ArrayList<>();
         String jsonString = NetworkUtils.getJsonString(preferences);
         list = JsonUtils.getRecipesNamesList(jsonString);

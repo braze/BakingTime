@@ -17,7 +17,6 @@ import udacity.example.com.bakingtime.R;
  */
 public class BakeWidgetProvider extends AppWidgetProvider {
     
-    private static String TAG = BakeWidgetProvider.class.getSimpleName();
     private static String mCakeName = "Cake";
 
     static void updateAppWidget(Context context, AppWidgetManager appWidgetManager, int appWidgetId,
@@ -39,7 +38,6 @@ public class BakeWidgetProvider extends AppWidgetProvider {
             remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget_list_view);
             Intent intent = new Intent(context, ListWidgetService.class);
 
-            Log.d(TAG, "updateAppWidget: cakeName = " + cakeName);
             remoteViews.setTextViewText(R.id.cake_name, mCakeName);
             remoteViews.setRemoteAdapter(R.id.widget_list_view, intent);
 

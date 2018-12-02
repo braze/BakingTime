@@ -15,7 +15,6 @@ public class BakingTimeService extends IntentService {
 
     public static final String ACTION_UPDATE_BAKE_WIDGETS = "udacity.example.com.bakingtime.action.update_bake_widgets";
 
-
     public BakingTimeService() {
         super("BakingTimeService");
     }
@@ -27,7 +26,6 @@ public class BakingTimeService extends IntentService {
         intent.putExtra(EXTRA_TEXT, cakeName);
         context.startService(intent);
     }
-
 
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
