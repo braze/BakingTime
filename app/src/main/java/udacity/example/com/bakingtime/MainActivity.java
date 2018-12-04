@@ -37,16 +37,16 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted, 
     public static final String EXTRA_INGREDIENTS_LIST = "ingredients_list";
     private static final int RECIPE_LOADER_ID = 1;
 
-    private String cakeName;
-    private String cakeId;
+    private String mCakeName;
+    private String mCakeId;
 
     private MainActivityAdapter mAdapter;
     private RecyclerView mRecyclerView;
     private GridLayoutManager mGridLayoutManager;
-    private SharedPreferences preferences;
+    private SharedPreferences mPreferences;
 
-    private ArrayList<Bake> ingredients;
-    private ArrayList<Bake> steps;
+    private ArrayList<Bake> mIngredients;
+    private ArrayList<Bake> mSteps;
 
     @BindView(R.id.pb_loading_indicator)
     ProgressBar mProgressBar;
@@ -56,9 +56,9 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted, 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
-        // bind the view using butterknife
+        // bind the view using butterKnife
         ButterKnife.bind(this);
 
         mRecyclerView = (RecyclerView) findViewById(R.id.rv_recipes);
@@ -87,8 +87,8 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted, 
 
     @Override
     public void onClick(int position) {
-        cakeId = mAdapter.getRecipesNameList().get(position).getId();
-        cakeName = mAdapter.getRecipesNameList().get(position).getName();
+        mCakeId = mAdapter.getRecipesNameList().get(position).getId();
+        mCakeName = mAdapter.getRecipesNameList().get(position).getName();
 
         LoaderManager loaderManager = getSupportLoaderManager();
         Loader<Bake> loader = loaderManager.getLoader(RECIPE_LOADER_ID);
@@ -106,7 +106,7 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted, 
     private void makeRecipesQuery(Context context) {
         if (NetworkUtils.hasInternetConnection(context)) {
             mProgressBar.setVisibility(View.VISIBLE);
-            new MainActivityQueryAsyncTask(MainActivity.this, preferences).execute();
+            new MainActivityQueryAsyncTask(MainActivity.this, mPreferences).execute();
         }
     }
 
@@ -118,7 +118,7 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted, 
             @Override
             public Bake loadInBackground() {
                 String jsonString = NetworkUtils.getSharedPreferences().getString(THE_JSON,"");
-                return JsonUtils.getRecipeDetails(jsonString, cakeId);
+                return JsonUtils.getRecipeDetails(jsonString, mCakeId);
             }
             @Override
             protected void onStartLoading() {
@@ -129,12 +129,12 @@ public class MainActivity extends AppCompatActivity implements OnTaskCompleted, 
 
     @Override
     public void onLoadFinished(@NonNull Loader<Bake> loader, Bake bake) {
-        ingredients = bake.getIngredientsList();
-        steps = bake.getStepsList();
+        mIngredients = bake.getIngredientsList();
+        mSteps = bake.getStepsList();
         Intent intent = new Intent(MainActivity.this, RecipeActivity.class);
-        intent.putExtra(Intent.EXTRA_TEXT, cakeName);
-        intent.putParcelableArrayListExtra(EXTRA_STEPS_LIST, steps);
-        intent.putParcelableArrayListExtra(EXTRA_INGREDIENTS_LIST, ingredients);
+        intent.putExtra(Intent.EXTRA_TEXT, mCakeName);
+        intent.putParcelableArrayListExtra(EXTRA_STEPS_LIST, mSteps);
+        intent.putParcelableArrayListExtra(EXTRA_INGREDIENTS_LIST, mIngredients);
         startActivity(intent);
     }
 

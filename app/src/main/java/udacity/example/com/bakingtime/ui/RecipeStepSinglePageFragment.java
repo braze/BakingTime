@@ -7,7 +7,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,6 +29,7 @@ import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
+import com.squareup.picasso.Picasso;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -71,12 +71,12 @@ public class RecipeStepSinglePageFragment extends Fragment implements ExoPlayer.
     private long playBackPosition;
 
     private Boolean mTwoPane;
-    private String stepId;
-    private String videoUrl;
-    private String imageUrl;
-    private String description;
-    private int stepsListSize;
-    private Unbinder unbinder;
+    private String mStepId;
+    private String mVideoUrl;
+    private String mImageUrl;
+    private String mDescription;
+    private int mStepsListSize;
+    private Unbinder mUnbinder;
 
 
     public RecipeStepSinglePageFragment() {
@@ -109,11 +109,11 @@ public class RecipeStepSinglePageFragment extends Fragment implements ExoPlayer.
         mTwoPane = getResources().getBoolean(R.bool.two_pane);
 
         if (getArguments() != null) {
-            stepId = getArguments().getString(EXTRA_STEP_ID);
-            description = getArguments().getString(EXTRA_DESCRIPTION_ID);
-            imageUrl = getArguments().getString(EXTRA_IMAGE_URL_ID);
-            videoUrl = getArguments().getString(EXTRA_VIDEO_URL_ID);
-            stepsListSize = getArguments().getInt(EXTRA_STEPS_LIST_SIZE);
+            mStepId = getArguments().getString(EXTRA_STEP_ID);
+            mDescription = getArguments().getString(EXTRA_DESCRIPTION_ID);
+            mImageUrl = getArguments().getString(EXTRA_IMAGE_URL_ID);
+            mVideoUrl = getArguments().getString(EXTRA_VIDEO_URL_ID);
+            mStepsListSize = getArguments().getInt(EXTRA_STEPS_LIST_SIZE);
         }
     }
 
@@ -129,7 +129,7 @@ public class RecipeStepSinglePageFragment extends Fragment implements ExoPlayer.
         }
 
         View view = inflater.inflate(R.layout.master_recipe_action_fragment, container, false);
-        unbinder = ButterKnife.bind(this, view);
+        mUnbinder = ButterKnife.bind(this, view);
         return view;
     }
 
@@ -137,7 +137,7 @@ public class RecipeStepSinglePageFragment extends Fragment implements ExoPlayer.
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        descriptionTextView.setText(description);
+        descriptionTextView.setText(mDescription);
         initializeButtons();
 
     }
@@ -185,11 +185,15 @@ public class RecipeStepSinglePageFragment extends Fragment implements ExoPlayer.
     @Override
     public void onResume() {
         super.onResume();
-        if (videoUrl != null && !videoUrl.isEmpty()) {
+        if (mVideoUrl != null && !mVideoUrl.isEmpty()) {
             initPrepareAndPlay();
 
-        } else if (imageUrl != null && !imageUrl.isEmpty()){
-            initPrepareAndPlay();
+        } else if (mImageUrl != null && !mImageUrl.isEmpty()){
+            mPlayerView.setVisibility(View.GONE);
+            imageView.setVisibility(View.VISIBLE);
+            Picasso.with(getContext()).load(mImageUrl).fit().centerCrop()
+                    .error(R.drawable.ic_local_dining_black_24dp)
+                    .into(imageView);
 
         }else {
             //hide exoPlayer
@@ -201,11 +205,11 @@ public class RecipeStepSinglePageFragment extends Fragment implements ExoPlayer.
 
     private void initPrepareAndPlay() {
         initializeMediaSession();
-        initPlayer(Uri.parse(videoUrl));
+        initPlayer(Uri.parse(mVideoUrl));
 
         int orientation = getResources().getConfiguration().orientation;
         if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            // Expand video, hide description, hide system UI
+            // Expand video, hide mDescription, hide system UI
             if (!mTwoPane) {
                 expandVideoView(mPlayerView);
                 descriptionTextView.setVisibility(View.GONE);
@@ -221,13 +225,23 @@ public class RecipeStepSinglePageFragment extends Fragment implements ExoPlayer.
     @Override
     public void onPause() {
         super.onPause();
-        releasePlayer();
+        if (Util.SDK_INT <= 23) {
+            releasePlayer();
+        }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (Util.SDK_INT > 23) {
+            releasePlayer();
+        }
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        unbinder.unbind();
+        mUnbinder.unbind();
     }
 
     public void initPlayer(Uri videoURL) {
@@ -317,8 +331,8 @@ public class RecipeStepSinglePageFragment extends Fragment implements ExoPlayer.
             next.setVisibility(View.GONE);
             previous.setVisibility(View.GONE);
         } else {
-            int steps = stepsListSize - 2;
-            int id = Integer.parseInt(stepId);
+            int steps = mStepsListSize - 2;
+            int id = Integer.parseInt(mStepId);
             if (id == steps) {
                 next.setVisibility(View.INVISIBLE);
             }

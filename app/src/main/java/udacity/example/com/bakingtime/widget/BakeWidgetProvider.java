@@ -6,7 +6,6 @@ import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.RemoteViews;
 
 import udacity.example.com.bakingtime.MainActivity;
@@ -17,7 +16,7 @@ import udacity.example.com.bakingtime.R;
  */
 public class BakeWidgetProvider extends AppWidgetProvider {
     
-    private static String mCakeName = "Cake";
+    private static String sCakeName = "Cake";
 
     static void updateAppWidget(Context context, AppWidgetManager appWidgetManager, int appWidgetId,
                                 String cakeName) {
@@ -26,10 +25,10 @@ public class BakeWidgetProvider extends AppWidgetProvider {
         int width = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH);
 
         if (cakeName != null){
-            mCakeName = cakeName;
+            sCakeName = cakeName;
         }
         RemoteViews remoteViews = null;
-        if (width < 300) {
+        if (width < 200) {
             remoteViews = new RemoteViews(context.getPackageName(), R.layout.bake_widget_provider);
             Intent intent = new Intent(context, MainActivity.class);
             PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
@@ -38,7 +37,7 @@ public class BakeWidgetProvider extends AppWidgetProvider {
             remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget_list_view);
             Intent intent = new Intent(context, ListWidgetService.class);
 
-            remoteViews.setTextViewText(R.id.cake_name, mCakeName);
+            remoteViews.setTextViewText(R.id.cake_name, sCakeName);
             remoteViews.setRemoteAdapter(R.id.widget_list_view, intent);
 
             // Set the PlantDetailActivity intent to launch when clicked

@@ -21,7 +21,6 @@ public class ListWidgetService extends RemoteViewsService {
     }
 }
 
-
 class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
 
 
@@ -40,8 +39,8 @@ class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
     @Override
     public void onDataSetChanged() {
         //fetch data
-        if (RecipeActivity.ingredients != null){
-            mIngredients = RecipeActivity.ingredients;
+        if (RecipeActivity.sIngredients != null){
+            mIngredients = RecipeActivity.sIngredients;
         }
     }
 

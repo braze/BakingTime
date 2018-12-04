@@ -61,7 +61,7 @@ public class IngredientsListFragment extends Fragment {
             ArrayList<Bake> ingredientsList = savedInstanceState.getParcelableArrayList(ADAPTER_LIST);
             mAdapter.setRecipeIngredientsList(ingredientsList);
         } else {
-            mAdapter.setRecipeIngredientsList(RecipeActivity.ingredients);
+            mAdapter.setRecipeIngredientsList(RecipeActivity.sIngredients);
         }
 
         return rootView;

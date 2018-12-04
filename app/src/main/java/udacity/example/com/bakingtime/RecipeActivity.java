@@ -28,9 +28,9 @@ public class RecipeActivity extends AppCompatActivity implements RecipeListFragm
     RecipeListFragment mRecipeListFragment;
     RecipeStepSinglePageFragment mRecipeStepSinglePageFragment;
 
-    private int currentPosition;
-    public static ArrayList<Bake> ingredients;
-    private ArrayList<Bake> steps;
+    public static ArrayList<Bake> sIngredients;
+    private ArrayList<Bake> mSteps;
+    private int mCurrentPosition;
     private String mCakeName;
     boolean mTwoPane;
 
@@ -43,21 +43,21 @@ public class RecipeActivity extends AppCompatActivity implements RecipeListFragm
         if (intent != null) {
             mCakeName = intent.getStringExtra(Intent.EXTRA_TEXT);
             setTitle(mCakeName);
-            steps = intent.getExtras().getParcelableArrayList(EXTRA_STEPS_LIST);
-            ingredients = intent.getExtras().getParcelableArrayList(EXTRA_INGREDIENTS_LIST);
+            mSteps = intent.getExtras().getParcelableArrayList(EXTRA_STEPS_LIST);
+            sIngredients = intent.getExtras().getParcelableArrayList(EXTRA_INGREDIENTS_LIST);
         } else {
             closeOnError();
         }
 
         mTwoPane = getResources().getBoolean(R.bool.two_pane);
         mIngredientFragment = IngredientsListFragment.newInstance();
-        mRecipeListFragment = RecipeListFragment.newInstance(steps);
+        mRecipeListFragment = RecipeListFragment.newInstance(mSteps);
 
         FragmentManager fragmentManager = getSupportFragmentManager();
 
         if (savedInstanceState != null) {
-            ingredients = savedInstanceState.getParcelableArrayList("ingredientsList");
-            steps = savedInstanceState.getParcelableArrayList("stepsList");
+            sIngredients = savedInstanceState.getParcelableArrayList("ingredientsList");
+            mSteps = savedInstanceState.getParcelableArrayList("stepsList");
 
             if (savedInstanceState.containsKey("mIngredientFragment")) {
                 mIngredientFragment = (IngredientsListFragment) fragmentManager.getFragment(savedInstanceState, "mIngredientFragment");
@@ -87,7 +87,7 @@ public class RecipeActivity extends AppCompatActivity implements RecipeListFragm
 
     @Override
     public void onListItemSelected(int position) {
-        currentPosition = position;
+        mCurrentPosition = position;
         FragmentManager fragmentManager = getSupportFragmentManager();
 
         if (position == 0) {
@@ -105,12 +105,12 @@ public class RecipeActivity extends AppCompatActivity implements RecipeListFragm
     }
 
     private void getStepDetailsFragment(int position) {
-        Bake step = steps.get(position);
+        Bake step = mSteps.get(position);
         String stepId = step.getStepId();
         String description = step.getDescription();
         String videoURL = step.getVideoURL();
         String thumbnailURL = step.getThumbnailURL();
-        int stepsListSize = steps.size();
+        int stepsListSize = mSteps.size();
 
         mRecipeStepSinglePageFragment = RecipeStepSinglePageFragment.newInstance(stepId,
                 videoURL, description, thumbnailURL, stepsListSize);
@@ -145,13 +145,13 @@ public class RecipeActivity extends AppCompatActivity implements RecipeListFragm
     }
 
     public void next(View view) {
-        currentPosition = currentPosition + 1;
-        getStepDetailsFragment(currentPosition);
+        mCurrentPosition = mCurrentPosition + 1;
+        getStepDetailsFragment(mCurrentPosition);
     }
 
     public void previous(View view) {
-        currentPosition = currentPosition - 1;
-        getStepDetailsFragment(currentPosition);
+        mCurrentPosition = mCurrentPosition - 1;
+        getStepDetailsFragment(mCurrentPosition);
     }
 
     @Override
@@ -164,20 +164,8 @@ public class RecipeActivity extends AppCompatActivity implements RecipeListFragm
         if (mIngredientFragment != null && getSupportFragmentManager().getFragments().contains(mIngredientFragment)) {
             getSupportFragmentManager().putFragment(outState, "mIngredientFragment", mIngredientFragment);
         }
-        outState.putParcelableArrayList("ingredientsList", ingredients);
-        outState.putParcelableArrayList("stepsList", steps);
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (mTwoPane) {
-            startActivity(new Intent(RecipeActivity.this, MainActivity.class));
-        }
-        if (getSupportFragmentManager().getBackStackEntryCount() == 1) {
-            finish();
-        } else {
-            super.onBackPressed();
-        }
+        outState.putParcelableArrayList("ingredientsList", sIngredients);
+        outState.putParcelableArrayList("stepsList", mSteps);
     }
 
     private void closeOnError() {

@@ -16,7 +16,7 @@ public class NetworkUtils {
 
     private static final String BAKING_BASE_URL = "https://d17h27t6h515a5.cloudfront.net/topher/2017/May/59121517_baking/baking.json";
     public static final String THE_JSON = "the_Json";
-    private static SharedPreferences mPreferences;
+    private static SharedPreferences sPreferences;
 
     private NetworkUtils() {
     }
@@ -37,7 +37,7 @@ public class NetworkUtils {
     }
 
     public static String getJsonString(SharedPreferences preferences){
-        mPreferences = preferences;
+        sPreferences = preferences;
 
         URL bakeUrl = buildBaseUrl();
         String jsonString = null;
@@ -46,7 +46,7 @@ public class NetworkUtils {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        mPreferences.edit().putString(THE_JSON, jsonString).apply();
+        sPreferences.edit().putString(THE_JSON, jsonString).apply();
         return jsonString;
     }
 
@@ -93,6 +93,6 @@ public class NetworkUtils {
     }
 
     public static SharedPreferences getSharedPreferences() {
-        return mPreferences;
+        return sPreferences;
     }
 }

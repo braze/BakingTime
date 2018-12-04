@@ -12,20 +12,20 @@ import udacity.example.com.bakingtime.utilites.NetworkUtils;
 
 public class MainActivityQueryAsyncTask extends AsyncTask<Void, Void, ArrayList<Bake>> {
     
-    private OnTaskCompleted taskCompleted;
-    private SharedPreferences preferences;
+    private OnTaskCompleted mTaskCompleted;
+    private SharedPreferences mPreferences;
 
 
     public MainActivityQueryAsyncTask(OnTaskCompleted activityContext, SharedPreferences preferences) {
-        this.taskCompleted = activityContext;
-        this.preferences = preferences;
+        this.mTaskCompleted = activityContext;
+        this.mPreferences = preferences;
     }
 
     @Override
     protected ArrayList<Bake> doInBackground(Void... voids) {
 
         ArrayList<Bake> list = new ArrayList<>();
-        String jsonString = NetworkUtils.getJsonString(preferences);
+        String jsonString = NetworkUtils.getJsonString(mPreferences);
         list = JsonUtils.getRecipesNamesList(jsonString);
         return list;
     }
@@ -33,6 +33,6 @@ public class MainActivityQueryAsyncTask extends AsyncTask<Void, Void, ArrayList<
     @Override
     protected void onPostExecute(ArrayList<Bake> recipesNamesList) {
         super.onPostExecute(recipesNamesList);
-        taskCompleted.onTaskCompleted(recipesNamesList);
+        mTaskCompleted.onTaskCompleted(recipesNamesList);
     }
 }
